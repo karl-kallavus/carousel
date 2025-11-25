@@ -35,7 +35,7 @@ const CarouselItems = ({ carouselRef, translateX }: CarouselItemsProps) => {
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-linear-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
       {/* Right fade */}
       <div className="absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
-      
+
       <div
         ref={carouselRef}
         className="flex gap-4"
@@ -81,6 +81,61 @@ const SpinButton = ({ onSpin, isSpinning }: SpinButtonProps) => (
 		{isSpinning ? "Spinning..." : "Spin Case"}
 	</button>
 );
+
+const ConfettiEffect = () => {
+	return (
+		<div className="absolute inset-0 pointer-events-none">
+			{[...Array(50)].map((_, i) => {
+				const uniqueId = `confetti-${Date.now()}-${Math.random()}-${i}`;
+				const colors = ['#a855f7', '#6366f1', '#ec4899', '#f59e0b', '#10b981'];
+				return (
+					<div
+						key={uniqueId}
+						className="absolute w-2 h-2 rounded-full animate-[confetti_2s_ease-out_forwards]"
+						style={{
+							left: '50%',
+							top: '50%',
+							backgroundColor: colors[i % colors.length],
+							animationDelay: `${i * 0.02}s`,
+							transform: `rotate(${i * 7.2}deg) translateY(-${50 + Math.random() * 100}px) translateX(${Math.random() * 400 - 200}px)`,
+							opacity: 0
+						}}
+					/>
+				);
+			})}
+		</div>
+	);
+};
+
+interface WinnerCardProps {
+	wonItem: typeof baseItems[0];
+	onClose: () => void;
+}
+
+const WinnerCard = ({ wonItem, onClose }: WinnerCardProps) => {
+	return (
+		<div className="bg-linear-to-br from-purple-600 to-indigo-600 p-8 rounded-2xl shadow-2xl text-center space-y-6 min-w-[400px]">
+			<div className="text-6xl animate-bounce">🎉</div>
+			<h2 className="text-4xl font-bold text-white">Congratulations!</h2>
+			<p className="text-xl text-purple-100">You won:</p>
+			<div className="bg-white p-6 rounded-xl shadow-lg">
+				<img
+					src={wonItem.img}
+					alt={wonItem.name}
+					className="w-48 h-48 mx-auto object-cover rounded-lg mb-4"
+				/>
+				<p className="text-2xl font-bold text-purple-600 capitalize">{wonItem.name}</p>
+			</div>
+			<button
+				type="button"
+				onClick={onClose}
+				className="px-8 py-3 bg-white text-purple-600 font-semibold rounded-full hover:bg-purple-50 transition-colors"
+			>
+				Close
+			</button>
+		</div>
+	);
+};
 
 function App() {
 	const carouselRef = useRef<HTMLDivElement>(null);
@@ -149,45 +204,8 @@ function App() {
           onKeyDown={(e) => e.key === 'Escape' && setShowWinner(false)}
         >
           <div className="relative animate-[scaleIn_0.5s_ease-out]">
-            {/* Confetti effect */}
-            <div className="absolute inset-0 pointer-events-none">
-              {[...Array(50)].map((_, i) => (
-                <div
-                  key={`confetti-${i}`}
-                  className="absolute w-2 h-2 rounded-full animate-[confetti_2s_ease-out_forwards]"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    backgroundColor: ['#a855f7', '#6366f1', '#ec4899', '#f59e0b', '#10b981'][i % 5],
-                    animationDelay: `${i * 0.02}s`,
-                    transform: `rotate(${i * 7.2}deg) translateY(-${50 + Math.random() * 100}px) translateX(${Math.random() * 400 - 200}px)`,
-                    opacity: 0
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Winner card */}
-            <div className="bg-linear-to-br from-purple-600 to-indigo-600 p-8 rounded-2xl shadow-2xl text-center space-y-6 min-w-[400px]">
-              <div className="text-6xl animate-bounce">🎉</div>
-              <h2 className="text-4xl font-bold text-white">Congratulations!</h2>
-              <p className="text-xl text-purple-100">You won:</p>
-              <div className="bg-white p-6 rounded-xl shadow-lg">
-                <img
-                  src={wonItem.img}
-                  alt={wonItem.name}
-                  className="w-48 h-48 mx-auto object-cover rounded-lg mb-4"
-                />
-                <p className="text-2xl font-bold text-purple-600 capitalize">{wonItem.name}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowWinner(false)}
-                className="px-8 py-3 bg-white text-purple-600 font-semibold rounded-full hover:bg-purple-50 transition-colors"
-              >
-                Close
-              </button>
-            </div>
+            <ConfettiEffect />
+            <WinnerCard wonItem={wonItem} onClose={() => setShowWinner(false)} />
           </div>
         </div>
       )}
