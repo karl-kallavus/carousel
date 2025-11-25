@@ -29,41 +29,41 @@ interface CarouselItemsProps {
 }
 
 const CarouselItems = ({ carouselRef, translateX }: CarouselItemsProps) => {
-  return (
-    <div className="relative overflow-x-hidden overflow-y-visible py-16 px-4 w-full mx-auto" style={{ maxWidth: `${CAROUSEL_WIDTH}px` }}>
-      {/* Left fade */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 bg-linear-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
-      {/* Right fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+	return (
+		<div
+			className="relative overflow-x-hidden overflow-y-visible py-16 px-4 w-full mx-auto"
+			style={{ maxWidth: `${CAROUSEL_WIDTH}px` }}
+		>
+			{/* Left fade */}
+			<div className="absolute left-0 top-0 bottom-0 w-24 bg-linear-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+			{/* Right fade */}
+			<div className="absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
 
-      <div
-        ref={carouselRef}
-        className="flex gap-4"
-        style={{
-          transform: `translate3d(-${translateX}px, 0, 0)`,
-          transition: 'none',
-          willChange: 'transform'
-        }}
-      >
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="shrink-0 w-48 h-48"
-          >
-            <div className="w-full h-full bg-white rounded-lg overflow-hidden border border-gray-200">
-              <img
-                src={item.img}
-                alt={item.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+			<div
+				ref={carouselRef}
+				className="flex gap-4"
+				style={{
+					transform: `translate3d(-${translateX}px, 0, 0)`,
+					transition: "none",
+					willChange: "transform",
+				}}
+			>
+				{items.map((item) => (
+					<div key={item.id} className="shrink-0 w-48 h-48">
+						<div className="w-full h-full bg-white rounded-lg overflow-hidden border border-gray-200">
+							<img
+								src={item.img}
+								alt={item.name}
+								className="w-full h-full object-cover"
+								loading="lazy"
+								decoding="async"
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
 };
 
 interface SpinButtonProps {
@@ -87,18 +87,18 @@ const ConfettiEffect = () => {
 		<div className="absolute inset-0 pointer-events-none">
 			{[...Array(50)].map((_, i) => {
 				const uniqueId = `confetti-${Date.now()}-${Math.random()}-${i}`;
-				const colors = ['#a855f7', '#6366f1', '#ec4899', '#f59e0b', '#10b981'];
+				const colors = ["#a855f7", "#6366f1", "#ec4899", "#f59e0b", "#10b981"];
 				return (
 					<div
 						key={uniqueId}
 						className="absolute w-2 h-2 rounded-full animate-[confetti_2s_ease-out_forwards]"
 						style={{
-							left: '50%',
-							top: '50%',
+							left: "50%",
+							top: "50%",
 							backgroundColor: colors[i % colors.length],
 							animationDelay: `${i * 0.02}s`,
 							transform: `rotate(${i * 7.2}deg) translateY(-${50 + Math.random() * 100}px) translateX(${Math.random() * 400 - 200}px)`,
-							opacity: 0
+							opacity: 0,
 						}}
 					/>
 				);
@@ -108,7 +108,7 @@ const ConfettiEffect = () => {
 };
 
 interface WinnerCardProps {
-	wonItem: typeof baseItems[0];
+	wonItem: (typeof baseItems)[0];
 	onClose: () => void;
 }
 
@@ -124,7 +124,9 @@ const WinnerCard = ({ wonItem, onClose }: WinnerCardProps) => {
 					alt={wonItem.name}
 					className="w-48 h-48 mx-auto object-cover rounded-lg mb-4"
 				/>
-				<p className="text-2xl font-bold text-purple-600 capitalize">{wonItem.name}</p>
+				<p className="text-2xl font-bold text-purple-600 capitalize">
+					{wonItem.name}
+				</p>
 			</div>
 			<button
 				type="button"
@@ -142,7 +144,7 @@ function App() {
 	const [isSpinning, setIsSpinning] = useState(false);
 	const [translateX, setTranslateX] = useState(0);
 	const [showWinner, setShowWinner] = useState(false);
-	const [wonItem, setWonItem] = useState<typeof baseItems[0] | null>(null);
+	const [wonItem, setWonItem] = useState<(typeof baseItems)[0] | null>(null);
 
 	// TODO: This should be handled on the server side for fairness and security
 	// Server should return the winning item index to prevent client-side manipulation
@@ -193,22 +195,25 @@ function App() {
 
 	return (
 		<div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-8 p-8 overflow-x-hidden">
-      <CarouselItems carouselRef={carouselRef} translateX={translateX} />
-      <SpinButton onSpin={handleSpin} isSpinning={isSpinning} />
+			<CarouselItems carouselRef={carouselRef} translateX={translateX} />
+			<SpinButton onSpin={handleSpin} isSpinning={isSpinning} />
 
-      {showWinner && wonItem && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-[fadeIn_0.3s_ease-in-out]"
-          role="dialog"
-          aria-modal="true"
-          onKeyDown={(e) => e.key === 'Escape' && setShowWinner(false)}
-        >
-          <div className="relative animate-[scaleIn_0.5s_ease-out]">
-            <ConfettiEffect />
-            <WinnerCard wonItem={wonItem} onClose={() => setShowWinner(false)} />
-          </div>
-        </div>
-      )}
+			{showWinner && wonItem && (
+				<div
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-[fadeIn_0.3s_ease-in-out]"
+					role="dialog"
+					aria-modal="true"
+					onKeyDown={(e) => e.key === "Escape" && setShowWinner(false)}
+				>
+					<div className="relative animate-[scaleIn_0.5s_ease-out]">
+						<ConfettiEffect />
+						<WinnerCard
+							wonItem={wonItem}
+							onClose={() => setShowWinner(false)}
+						/>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
